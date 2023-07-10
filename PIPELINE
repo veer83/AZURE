@@ -1,43 +1,58 @@
+   +-------------------------+
+   |     Azure DevOps        |
+   |                         |
+   |  +-------------------+  |
+   |  |    Azure Pipeline |  |
+   |  +-------------------+  |
+   |           |             |
+   |           |  Triggers:  |
+   |           |  - Push to  |
+   |           |    feature  |
+   |           |    branch   |
+   |           v             |
+   |  +-------------------+  |
+   |  |    CI Job (Feature)|  |
+   |  +-------------------+  |
+   |           |             |
+   |           |  Build and |
+   |           |  Test your |
+   |           |  code on   |
+   |           |  feature   |
+   |           |  branch    |
+   |           v             |
+   |  +-------------------+  |
+   |    Deploy to Non-Prod | |
+   |       Environment   |   |
+   |  +-------------------+  |
+   |           |             |
+   |           |  Deploy    |
+   |           |  your      |
+   |           |  application|
+   |           v             |
+   |  +-------------------+  |
+   |   Send Message to     | |
+   |    Team Channel      |  |
+   |  +-------------------+  |
+   |           |             |
+   |           |  Send      |
+   |           |  message   |
+   |           |  to Team   |
+   |           |  channel   |
+   |           v             |
+   |  +-------------------+  |
+   |   Merge Code to       | |
+   |    Master Branch     |  |
+   |  +-------------------+  |
+   +-------------------------+
+In the updated diagram:
 
-  +-------------------+
-  | Azure DevOps      |
-  | YAML Pipeline     |
-  +-------------------+
-             |
-             |  Triggers: branch push or pull request
-             |
-             v
-  +-------------------+
-  | BuildAndDeploy    |
-  | Job               |
-  +-------------------+
-             |
-             |  Azure CLI tasks
-             |
-             v
-  +-------------------+
-  | Checkout          |
-  | Step              |
-  +-------------------+
-             |
-             |
-             v
-  +-------------------+
-  | Create New        |
-  | Directory         |
-  | Step              |
-  +-------------------+
-             |
-             |
-             v
-  +-------------------+
-  | Deploy Databricks |
-  | Code Step         |
-  +-------------------+
-In the diagram:
+The Azure Pipeline consists of a CI job, "CI Job (Feature)", which is triggered by code push events to the feature branch.
+After the CI job, a deployment job, "Deploy to Non-Prod Environment", is added to deploy the code to the non-production environment.
+Following the deployment, a job named "Send Message to Team Channel" is included to send a message to the Team channel with the job status.
+Lastly, a job titled "Merge Code to Master Branch" is added to merge the feature branch into the master branch for deployment to the production environment.
+This updated diagram reflects the specific steps of the Azure CI/CD pipeline, including CI, deployment to a non-production environment, sending a message to a Team channel, and merging the code into the master branch for production deployment.
 
-The Azure DevOps YAML Pipeline is the main component responsible for defining the pipeline stages and steps.
-The BuildAndDeploy job represents the job within the pipeline that performs the build and deployment tasks.
-The Checkout step checks out the source code from the repository.
-The Create New Directory step uses the Azure CLI task to create a new directory in the code repository.
-The Deploy Databricks Code step utilizes the Azure CLI task to execute commands for preparing and deploying the Databricks code from the feature branch.
+
+
+
+
