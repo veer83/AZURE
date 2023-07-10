@@ -1,0 +1,43 @@
+
+  +-------------------+
+  | Azure DevOps      |
+  | YAML Pipeline     |
+  +-------------------+
+             |
+             |  Triggers: branch push or pull request
+             |
+             v
+  +-------------------+
+  | BuildAndDeploy    |
+  | Job               |
+  +-------------------+
+             |
+             |  Azure CLI tasks
+             |
+             v
+  +-------------------+
+  | Checkout          |
+  | Step              |
+  +-------------------+
+             |
+             |
+             v
+  +-------------------+
+  | Create New        |
+  | Directory         |
+  | Step              |
+  +-------------------+
+             |
+             |
+             v
+  +-------------------+
+  | Deploy Databricks |
+  | Code Step         |
+  +-------------------+
+In the diagram:
+
+The Azure DevOps YAML Pipeline is the main component responsible for defining the pipeline stages and steps.
+The BuildAndDeploy job represents the job within the pipeline that performs the build and deployment tasks.
+The Checkout step checks out the source code from the repository.
+The Create New Directory step uses the Azure CLI task to create a new directory in the code repository.
+The Deploy Databricks Code step utilizes the Azure CLI task to execute commands for preparing and deploying the Databricks code from the feature branch.
