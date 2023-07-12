@@ -1,3 +1,8 @@
+
+Certainly! Here's an updated UML diagram that reflects the changes you requested:
+
+sql
+Copy code
    +-------------------------+
    |     Azure DevOps        |
    |                         |
@@ -8,7 +13,12 @@
    |           |  Triggers:  |
    |           |  - Push to  |
    |           |    feature  |
+   |           |    branch 
+   |                    or
+   |           |  - Push to  |
+   |           |    dev      |
    |           |    branch   |
+   |           |             |
    |           v             |
    |  +-------------------+  |
    |  |    BuildAndDeploy |  |
@@ -19,8 +29,8 @@
    |           |  Code      |
    |           v             |
    |  +-------------------+  |
-   |   Deploy to        |    |
-   | Non-Prod Env       |    |
+   |       Deploy to     |   |
+   |    Non-Prod Env    |    |
    |  +-------------------+  |
    |           |             |
    |           |  Deploy    |
@@ -29,38 +39,30 @@
    |           |  Environment|
    |           v             |
    |  +-------------------+  |
-   |    Unit Test        |   |
-   |    Stage            |   |
+   |       Unit Test     |   |
+   |       Stage         |   |
    |  +-------------------+  |
    |           |             |
-   |           |  Run       |
-   |           |  Unit      |
+   |           |  Run Unit  |
    |           |  Tests     |
    |           v             |
    |  +-------------------+  |
-   |    Send Message     |   |
-   |    to Teams Channel |   |
-   |  +-------------------+  |
-   |           |             |
-   |           |  Send      |
-   |           |  Message   |
-   |           |  to Teams  |
-   |           |  Channel   |
-   |           v             |
-   |  +-------------------+  |
-   |   Merge code to     |   |
-   |   Dev branch        |   |
+   |    Merge to Master  |   |
+   |       Stage         |   |
    |  +-------------------+  |
    |           |             |
    |           |  Merge     |
    |           |  code to   |
-   |           |  Dev branch|
+   |           |  Master    |
+   |           |  Branch    |
    |           v             |
    +-------------------------+
-The "BuildAndDeploy" job represents the CI/CD pipeline job.
-The trigger is set to code push events specifically on the feature branch.
-The job includes steps for checking out the code, deploying to the non-production environment, sending a message to the Teams channel, and merging the code to the dev branch.
-The "Deploy to Non-Prod Env" step deploys the code to the non-production environment.
-The "Send Message to Teams Channel" step sends a message to the Teams channel with the job status.
-The "Merge code to Dev branch" step merges the feature branch code to the dev branch if the deployment is successful.
-This diagram provides a visual representation of the Azure CI/CD pipeline with the added job triggers, non-production environment deployment, Teams channel message, and code merge to the dev branch.
+In the updated diagram:
+
+The Azure CI/CD pipeline includes a new stage, "Unit Test Stage," after the deployment to the non-production environment.
+The trigger is set to code push events specifically on the feature branch and the dev branch.
+The pipeline checks out the code from either the feature branch or the dev branch.
+After deploying to the non-production environment, the pipeline proceeds to the "Unit Test Stage" to run unit tests.
+After the successful completion of unit tests, the pipeline proceeds to the "Merge to Master Stage."
+The "Merge to Master Stage" merges the code into the master branch.
+This diagram represents an updated Azure CI/CD pipeline with code checkout from either the feature branch or the dev branch, an additional unit test stage after deployment, and code merging into the master branch.
