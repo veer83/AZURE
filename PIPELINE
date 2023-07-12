@@ -11,48 +11,56 @@
    |           |    branch   |
    |           v             |
    |  +-------------------+  |
-   |  |    CI Job (Feature)|  |
+   |  |    BuildAndDeploy |  |
+   |  |      Job          |  |
    |  +-------------------+  |
    |           |             |
-   |           |  Build and |
-   |           |  Test your |
-   |           |  code on   |
-   |           |  feature   |
-   |           |  branch    |
+   |           |  Checkout  |
+   |           |  Code      |
    |           v             |
    |  +-------------------+  |
-   |    Deploy to Non-Prod | |
-   |       Environment   |   |
+   |   Deploy to        |    |
+   | Non-Prod Env       |    |
    |  +-------------------+  |
    |           |             |
    |           |  Deploy    |
-   |           |  your      |
-   |           |  application|
+   |           |  to        |
+   |           |  Non-Prod  |
+   |           |  Environment|
    |           v             |
    |  +-------------------+  |
-   |   Send Message to     | |
-   |    Team Channel      |  |
+   |    Unit Test        |   |
+   |    Stage            |   |
+   |  +-------------------+  |
+   |           |             |
+   |           |  Run       |
+   |           |  Unit      |
+   |           |  Tests     |
+   |           v             |
+   |  +-------------------+  |
+   |    Send Message     |   |
+   |    to Teams Channel |   |
    |  +-------------------+  |
    |           |             |
    |           |  Send      |
-   |           |  message   |
-   |           |  to Team   |
-   |           |  channel   |
+   |           |  Message   |
+   |           |  to Teams  |
+   |           |  Channel   |
    |           v             |
    |  +-------------------+  |
-   |   Merge Code to       | |
-   |    Master Branch     |  |
+   |   Merge code to     |   |
+   |   Dev branch        |   |
    |  +-------------------+  |
+   |           |             |
+   |           |  Merge     |
+   |           |  code to   |
+   |           |  Dev branch|
+   |           v             |
    +-------------------------+
-In the updated diagram:
-
-The Azure Pipeline consists of a CI job, "CI Job (Feature)", which is triggered by code push events to the feature branch.
-After the CI job, a deployment job, "Deploy to Non-Prod Environment", is added to deploy the code to the non-production environment.
-Following the deployment, a job named "Send Message to Team Channel" is included to send a message to the Team channel with the job status.
-Lastly, a job titled "Merge Code to Master Branch" is added to merge the feature branch into the master branch for deployment to the production environment.
-This updated diagram reflects the specific steps of the Azure CI/CD pipeline, including CI, deployment to a non-production environment, sending a message to a Team channel, and merging the code into the master branch for production deployment.
-
-
-
-
-
+The "BuildAndDeploy" job represents the CI/CD pipeline job.
+The trigger is set to code push events specifically on the feature branch.
+The job includes steps for checking out the code, deploying to the non-production environment, sending a message to the Teams channel, and merging the code to the dev branch.
+The "Deploy to Non-Prod Env" step deploys the code to the non-production environment.
+The "Send Message to Teams Channel" step sends a message to the Teams channel with the job status.
+The "Merge code to Dev branch" step merges the feature branch code to the dev branch if the deployment is successful.
+This diagram provides a visual representation of the Azure CI/CD pipeline with the added job triggers, non-production environment deployment, Teams channel message, and code merge to the dev branch.
