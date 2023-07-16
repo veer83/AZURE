@@ -1,68 +1,49 @@
+---
+- name: Download Filebeat RPM
+  get_url:
+    url: "https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.6.2-x86_64.rpm"
+    dest: "/tmp/filebeat-8.6.2-x86_64.rpm"
 
-Certainly! Here's an updated UML diagram that reflects the changes you requested:
+- name: Install Filebeat RPM
+  yum:
+    name: "/tmp/filebeat-8.6.2-x86_64.rpm"
+    state: present
 
-sql
-Copy code
-   +-------------------------+
-   |     Azure DevOps        |
-   |                         |
-   |  +-------------------+  |
-   |  |    Azure Pipeline |  |
-   |  +-------------------+  |
-   |           |             |
-   |           |  Triggers:  |
-   |           |  - Push to  |
-   |           |    feature  |
-   |           |    branch 
-   |                    or
-   |           |  - Push to  |
-   |           |    dev      |
-   |           |    branch   |
-   |           |             |
-   |           v             |
-   |  +-------------------+  |
-   |  |    BuildAndDeploy |  |
-   |  |      Job          |  |
-   |  +-------------------+  |
-   |           |             |
-   |           |  Checkout  |
-   |           |  Code      |
-   |           v             |
-   |  +-------------------+  |
-   |       Deploy to     |   |
-   |    Non-Prod Env    |    |
-   |  +-------------------+  |
-   |           |             |
-   |           |  Deploy    |
-   |           |  to        |
-   |           |  Non-Prod  |
-   |           |  Environment|
-   |           v             |
-   |  +-------------------+  |
-   |       Unit Test     |   |
-   |       Stage         |   |
-   |  +-------------------+  |
-   |           |             |
-   |           |  Run Unit  |
-   |           |  Tests     |
-   |           v             |
-   |  +-------------------+  |
-   |    Merge to Master  |   |
-   |       Stage         |   |
-   |  +-------------------+  |
-   |           |             |
-   |           |  Merge     |
-   |           |  code to   |
-   |           |  Master    |
-   |           |  Branch    |
-   |           v             |
-   +-------------------------+
-In the updated diagram:
+- name: Create Filebeat configuration directory
+  file:
+    path: "/etc/filebeat"
+    state: directory
 
-The Azure CI/CD pipeline includes a new stage, "Unit Test Stage," after the deployment to the non-production environment.
-The trigger is set to code push events specifically on the feature branch and the dev branch.
-The pipeline checks out the code from either the feature branch or the dev branch.
-After deploying to the non-production environment, the pipeline proceeds to the "Unit Test Stage" to run unit tests.
-After the successful completion of unit tests, the pipeline proceeds to the "Merge to Master Stage."
-The "Merge to Master Stage" merges the code into the master branch.
-This diagram represents an updated Azure CI/CD pipeline with code checkout from either the feature branch or the dev branch, an additional unit test stage after deployment, and code merging into the master branch.
+- name: Copy Filebeat configuration file
+  template:
+    src: filebeat.yml.j2
+    dest: "/etc/filebeat/filebeat.yml"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Restart Filebeat service
+  service:
+    name: filebeat
+    state: restarted
+
+
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/*.log
+
+output.elasticsearch:
+  hosts: ["your_elasticsearch_host:9200"]
+
+setup.ilm.enabled: auto
+
+templates/filebeat.yml.j2
+
+---
+- name: Install Filebeat
+  hosts: your_servers
+  become: yes
+  roles:
+    - filebeat
