@@ -1,3 +1,101 @@
+{ ansible_managed | comment }}
+
+Example configuration:
+https://github.com/elastic/beats/blob/master/filebeat/filebeat.yml
+#=========================== Filebeat inputs =============================
+filebeat.config.inputs:
+enabled: true
+path: inputs.d/*.yml
+reload.enabled: true
+reload.period: 10s
+
+{% if fb_enable_modules|length > 0 %}
+#============================= Filebeat modules ===============================
+
+filebeat.config:
+modules:
+# Glob pattern for configuration loading
+path: /etc/filebeat/modules.d/*.yml
+
+# Set to true to enable config reloading
+reload.enabled: false
+{% endif %}
+
+#==================== Elasticsearch template setting ==========================
+
+setup.template.settings:
+index.number_of_shards: 1
+#index.codec: best_compression
+#_source.enabled: false
+
+#============================== Dashboards =====================================
+
+{% if fb_setup_dashboards %}
+
+Restore dashboards to kibana each time service starts
+setup.dashboards.enabled: true
+{% else %}
+
+Load dashboards to kibana with:
+filebeat -c /etc/filebeat/filebeat.yml setup -e
+{% endif %}
+
+{% if fb_setup_kibana_conf is defined %}
+
+Beats 6.x can setup kibana dashboards
+{{ fb_setup_kibana_conf | to_nice_yaml }}
+{% endif %}
+
+#================================ Outputs =====================================
+
+Only a single output may be defined.
+{% if fb_output_elasticsearch_enabled %}
+
+Elasticsearch as output
+output.elasticsearch:
+# Array of hosts to connect to.
+hosts: {{ fb_output_elasticsearch_hosts | to_json }}
+
+# Proxy server URL
+# proxy_url: http://proxy:3128
+{% if fb_protocol %}
+protocol: {{ fb_protocol }}
+{% endif %}
+{% if fb_es_username %}
+username: {{ fb_es_username }}
+password: {{ fb_es_password }}
+{% endif %}
+{% endif %}
+
+{% if fb_output_logstash_enabled %}
+
+Logstash as output
+output.logstash:
+# The Logstash hosts
+hosts: {{ fb_output_logstash_hosts | to_json }}
+loadbalance: true
+{% endif %}
+
+{% if fb_output_kafka_conf is defined %}
+{{ fb_output_kafka_conf | to_nice_yaml }}
+{% endif %}
+
+#================================ Processors =====================================
+
+processors:
+
+add_host_metadata: ~
+#================================ Logging =====================================
+
+logging.level: {{ fb_logging_level }}
+logging.selectors: {{ fb_logging_selectors | to_json }}
+logging.to_files: true
+logging.files:
+path: /var/log/filebeat
+name: filebeat
+keepfiles: 7
+permissions: 0644
+rotateeverybytesedit: 104857600
 ---
 - name: Download Filebeat RPM
   get_url:
