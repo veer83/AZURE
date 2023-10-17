@@ -1,3 +1,14 @@
+
+# Get a list of all data streams
+curl_response=$(curl -s -u "$USERNAME:$PASSWORD" -X GET "https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}/_data_stream")
+data_stream_names=$(echo "$curl_response" | jq -r '. | keys_unsorted[]')
+
+# Iterate through the data streams and print them
+for DATA_STREAM in $data_stream_names; do
+  # Print the data stream name
+  echo "Data stream: $DATA_STREAM"
+done
+
 #!/bin/bash
 
 # Elasticsearch connection settings
