@@ -1,4 +1,20 @@
 
+
+
+# Get a list of all data streams
+curl_response=$(curl -s -u "$USERNAME:$PASSWORD" -X GET "https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}/_data_stream")
+data_stream_names=$(echo "$curl_response" | jq -r '.[]')
+
+# Iterate through the data streams and print them (excluding data streams with ".monitor")
+for DATA_STREAM in $data_stream_names; do
+  # Check if the data stream name contains ".monitor"
+  if [[ "$DATA_STREAM" != *".monitor"* ]]; then
+    # Print the data stream name
+    echo "Data stream: $DATA_STREAM"
+  else
+    echo "Skipping system data stream: $DATA_STREAM"
+  fi
+done
 # Get a list of all data streams
 curl_response=$(curl -s -u "$USERNAME:$PASSWORD" -X GET "https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}/_data_stream")
 data_stream_names=$(echo "$curl_response" | jq -r '. | keys_unsorted[]')
