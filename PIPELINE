@@ -1,3 +1,22 @@
+#!/bin/bash
+
+# Elasticsearch connection settings
+ELASTICSEARCH_HOST="your-elasticsearch-host"
+ELASTICSEARCH_PORT="9200"
+USERNAME="elastic"
+PASSWORD="test"
+EXCLUDE_PATTERN=".monitoring*"
+
+# Get a list of all data streams and iterate through them
+while IFS= read -r DATA_STREAM; do
+  # Check if the data stream matches the exclude pattern
+  if [[ "$DATA_STREAM" != *$EXCLUDE_PATTERN* ]]; then
+    # Print the data stream name
+    echo "Data stream: $DATA_STREAM"
+  else
+    echo "Skipping system data stream: $DATA_STREAM"
+  fi
+done < <(curl -s -u "$USERNAME:$PASSWORD" -X GET "https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}/_data_stream" | jq -r 'keys[]')
 
 #!/bin/bash
 
