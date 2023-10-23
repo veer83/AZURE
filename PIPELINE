@@ -1,4 +1,30 @@
+#!/bin/bash
 
+# Elasticsearch connection settings
+ELASTICSEARCH_HOST="your-elasticsearch-host"
+ELASTICSEARCH_PORT="9200"
+API_KEY="your-api-key"
+EXCLUDE_PATTERN=".monitoring*"
+
+# Get a list of all data streams
+data_streams=$(curl -s -H "Authorization: ApiKey $API_KEY" -X GET "https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}/_data_stream" | jq -r 'keys[]')
+
+# Iterate through the data streams and delete them (excluding data streams with ".monitor")
+for data_stream in $data_streams; do
+  # Check if the data stream name does not contain ".monitor"
+  if [[ "$data_stream" != *$EXCLUDE_PATTERN ]]; then
+    # Delete the data stream
+    delete_response=$(curl -H "Authorization: ApiKey $API_KEY" -X DELETE "https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}/_data_stream/$data_stream")
+    # Check the response status code to determine success
+    if [ $? -eq 0 ]; then
+      echo "Deleted data stream: $data_stream"
+    else
+      echo "Failed to delete data stream: $data_stream"
+    fi
+  else
+    echo "Skipping system data stream: $data_stream"
+  fi
+done
 
 
 # Get a list of all data streams
