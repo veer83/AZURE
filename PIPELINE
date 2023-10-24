@@ -1,4 +1,7 @@
-#!/bin/bash
+
+
+
+curl -u "$USERNAME:$PASSWORD" -X POST "https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}/${INDEX_NAME}/_close"#!/bin/bash
 
 # Elasticsearch connection settings
 ELASTICSEARCH_HOST="your-elasticsearch-host"
