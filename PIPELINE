@@ -1,7 +1,10 @@
 
 
+INDEX_NAMES=".ds.fleet-resul-1,.ds.fleet-resul-2,.ds.fleet-resul-3,.ml-cofnig,.ml-1,.mil-aotnation"
 
-curl -u "$USERNAME:$PASSWORD" -X POST "https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}/${INDEX_NAME}/_close"#!/bin/bash
+# Close the specified indices
+curl -u "$USERNAME:$PASSWORD" -X POST "https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}/{${INDEX_NAMES}}/_close"
+#!/bin/bash
 
 # Elasticsearch connection settings
 ELASTICSEARCH_HOST="your-elasticsearch-host"
