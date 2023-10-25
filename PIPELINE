@@ -1,4 +1,5 @@
-
+ curl -X POST "https://${KIBANA_HOST}:${KIBANA_PORT}/api/index_management/indices/close" -H "Content-Type: application/json" -H "Authorization: ApiKey $API_KEY" -d "{\"indices\":[\"$INDEX_NAME\"]}"
+done
 #!/bin/bash
 
 # Kibana connection settings
