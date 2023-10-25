@@ -1,4 +1,8 @@
- curl -X POST "https://${KIBANA_HOST}:${KIBANA_PORT}/api/index_management/indices/close" -H "Content-Type: application/json" -H "Authorization: ApiKey $API_KEY" -d "{\"indices\":[\"$INDEX_NAME\"]}"
+CSRF_TOKEN=$(curl -XGET -k "https://${KIBANA_HOST}:${KIBANA_PORT}/api/security/v1/csrf")
+
+# Close the specified indices with the kbn-xsrf header
+for INDEX_NAME in "${INDEX_NAMES[@]}"; do
+  curl -X POST "https://${KIBANA_HOST}:${KIBANA_PORT}/api/index_management/indices/close" -H "Content-Type: application/json" -H "Authorization: ApiKey $API_KEY" -H "kbn-xsrf: $CSRF_TOKEN" -d "{\"indices\":[\"$INDEX_NAME\"]}"
 done
 #!/bin/bash
 
