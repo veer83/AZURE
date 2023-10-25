@@ -1,4 +1,23 @@
 
+#!/bin/bash
+
+# Kibana connection settings
+KIBANA_HOST="your-kibana-host"
+KIBANA_PORT="5601"
+API_KEY="your-api-key"
+
+# List of indices to close
+INDEX_NAMES=(
+  ".ds-.fleet-action-result-2023"
+  ".ds-.fleet-action-result-2024"
+  ".ds-.fleet-action-result-2025"
+)
+
+# Close the specified indices
+for INDEX_NAME in "${INDEX_NAMES[@]}"; do
+  curl -X POST "http://${KIBANA_HOST}:${KIBANA_PORT}/api/index_management/indices/close" -H "kbn-xsrf: true" -H "Authorization: ApiKey $API_KEY" -d '{"indices":["'"$INDEX_NAME"'"]}'
+done
+
 
 INDEX_NAMES=".ds.fleet-resul-1,.ds.fleet-resul-2,.ds.fleet-resul-3,.ml-cofnig,.ml-1,.mil-aotnation"
 
