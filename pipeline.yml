@@ -1,0 +1,68 @@
+trigger:
+- dev  # Set the branch name to 'dev' to trigger the pipeline from the dev branch
+
+parameters:
+- name: environment
+  type: string
+  displayName: 'Select Environment'
+  default: 'staging'
+  values:
+  - 'staging'
+  - 'production'
+  - 'development'
+
+jobs:
+- job: 'RunScript'
+  pool:
+    vmImage: 'rhel-7'
+  
+  steps:
+  - script: |
+      #!/bin/bash
+
+      case "${{ parameters.environment }}" in
+        'staging')
+          KIBANA_HOST="staging-kibana-host"
+          ELASTICSEARCH_HOST="staging-elasticsearch-host"
+          ;;
+        'production')
+          KIBANA_HOST="production-kibana-host"
+          ELASTICSEARCH_HOST="production-elasticsearch-host"
+          ;;
+        'development')
+          KIBANA_HOST="development-kibana-host"
+          ELASTICSEARCH_HOST="development-elasticsearch-host"
+          ;;
+      esac
+
+      API_KEY="your-api-key"
+
+      INDEX_NAMES=(
+        ".ds-.fleet-action-result-2023"
+        ".ds-.fleet-action-result-2024"
+        ".ds-.fleet-action-result-2025"
+      )
+
+      CSRF_TOKEN=$(curl -XGET -k "https://${KIBANA_HOST}:${KIBANA_PORT}/api/security/v1/csrf" | jq -r .token)
+
+      for INDEX_NAME in "${INDEX_NAMES[@]}"; do
+        curl -X POST "https://${KIBANA_HOST}:${KIBANA_PORT}/api/index_management/indices/close" -H "Content-Type: application/json" -H "Authorization: ApiKey $API_KEY" -H "kbn-xsrf: $CSRF_TOKEN" -d "{\"indices\":[\"$INDEX_NAME\"]}"
+      done
+
+      ELASTICSEARCH_HOST="${ELASTICSEARCH_HOST}"
+      ELASTICSEARCH_PORT="9200"
+      USERNAME="elastic"
+      PASSWORD="test"
+      EXCLUDE_PATTERN=".monitoring*"
+
+      DATA_STREAMS=$(curl -s -u "$USERNAME:$PASSWORD" -X GET "https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}/_data_stream" | jq -r 'keys[]')
+
+      for DATA_STREAM in $DATA_STREAMS; do
+        if [[ "$DATA_STREAM" != *$EXCLUDE_PATTERN* ]]; then
+          echo "Deleting data stream in Elasticsearch: $DATA_STREAM"
+          curl -X DELETE -u "$USERNAME:$PASSWORD" "https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}/_data_stream/$DATA_STREAM"
+        else
+          echo "Skipping system data stream in Elasticsearch: $DATA_STREAM"
+        fi
+      done
+    displayName: 'Run Script'
