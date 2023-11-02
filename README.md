@@ -1,3 +1,17 @@
+
+Hello 
+
+I hope this email finds you well. I wanted to update you on the current status of our metrics transfer into LaaS for 3PAR, NetApp, and Pure storage systems after we updated the required passwords.
+
+Unfortunately, we've encountered an issue with Filebeat not being able to retrieve metrics for the number of storage systems due to a network port issue. Both Hanu and I have been actively working on this matter and have raised a request to enable the port from source to destination.
+
+It's important to note that this port was functioning perfectly before the network change, which makes it clear that the issue is related to the recent changes.
+
+We would greatly appreciate your assistance in resolving this matter as soon as possible to ensure that our metrics are being transferred correctly into LaaS. If you require any further information or access details to investigate the issue, please don't hesitate to reach out to either Hanu or me, and we will be more than happy to provide the necessary details.
+
+Thank you for your prompt attention to this issue, and we look forward to working together to address and resolve this situation effectively.
+
+
 # Disaster Recovery Runbook
 
 ## Introduction
